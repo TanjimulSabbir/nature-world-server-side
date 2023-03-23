@@ -45,7 +45,6 @@ async function run() {
                 return res.status(401).send({ message: 'unauthorized access', status: 401 })
             }
             jwt.verify(Token, process.env.ACCESS_TOKEN_SERECT_KEY, (err, decoded) => {
-                console.log(res)
                 if (err) {
                     return res.status(403).send({ message: 'Forbidden Access', status: 403 })
                 }
@@ -66,28 +65,24 @@ async function run() {
             }
             next()
         }
-        // app.get('/home/:id', VerifyJWT, CheckLoginAndJWTEmail, (req, res) => {
-        //     console.log("Jwt token Is verified")
-        //     res.status(200).send({ message: "Jwt Verified Successfully", status: 200 })
-        // })
+        app.get('/home/:id', (req, res) => {
+            res.status(200).send({ message: "Jwt Verified Successfully", status: 200 })
+        })
 
         // Add Login User
-        app.post("/alluser/:email", async (req, res) => {
+        app.post("/alluser/:id", async (req, res) => {
             try {
                 const UserData = req.body.UserData;
-                console.log(UserData, "UserData")
-                const AlreadyAdded = await LoginUsersCollections.find({ email: req.params.email }).toArray();
+                const AlreadyAdded = await LoginUsersCollections.find({ email: req.params.id }).toArray();
                 if (AlreadyAdded.length) {
                     return res.status(409).send({ message: "User already Added", status: 409 })
                 }
                 const result = await LoginUsersCollections.insertOne({ ...UserData })
-                console.log(result, 'User Login Result')
                 if (result.insertedId) {
                     return res.status(201).send({ message: "User Added Successfully", status: 201 })
                 }
                 return res.status(400).send({ message: "User Added Failded", status: 400 })
             } catch (error) {
-                console.log(error)
                 return res.status(500).send({ message: "Internal Error", status: 500, error: error })
             }
         })
@@ -95,13 +90,11 @@ async function run() {
         app.get("/alluser/:id", async (req, res) => {
             try {
                 const result = await LoginUsersCollections.find({}).toArray();
-                console.log(result, "AllUser")
                 if (result) {
                     return res.status(200).send({ message: "Data Retrive Successful", status: 200, data: result });
                 }
                 return res.status(400).send({ message: "User Added Failed", status: 400, });
             } catch (error) {
-                console.log(error)
                 return res.status(500).send({ message: "Internal Error", status: 500, error: error });
 
             }
@@ -121,7 +114,6 @@ async function run() {
         // Booking Data Get
         app.get("/booking/:id", async (req, res) => {
             const Booking = await BookingCollections.find({}).toArray();
-            console.log(Booking, "Booking")
             try {
                 if (!Booking) {
                     return res.status(404).send({ message: "No Data Found", status: 404 })
@@ -144,8 +136,6 @@ async function run() {
                     const result = await BookingCollections.updateOne({ id: BookingData.id },
                         { $set: { Quantity: BookingData.Quantity + PreviousQuantity } });
 
-                    console.log(result, 'result1')
-
                     if (!(result.modifiedCount)) {
                         return res.status(400).send({ message: "Failed", status: 400 })
                     }
@@ -153,7 +143,6 @@ async function run() {
                     return res.status(200).send({ message: "Data Added to Cart1", status: 200 })
                 }
                 const result = await BookingCollections.insertOne({ ...BookingData });
-                console.log(result, "result2");
 
                 if (!(result.insertedId)) {
                     return res.status(400).send({ message: "Failed", status: 400 })
@@ -162,7 +151,7 @@ async function run() {
 
             } catch (error) {
                 res.status(500).send({ message: "Server Error", status: 500 })
-                console.log(error)
+
             }
 
         })
