@@ -179,6 +179,6 @@ async function run() {
 run().catch(console.dir)
 
 app.get('/', (req, res) => {
-    console.log("Nature World is Running")
+
     res.send("Nature World Server is Running");
 })
