@@ -15,10 +15,7 @@ const port = process.env.PORT || 5000;
 app.listen(port, () => {
     console.log("Nature World Server is Running");
 })
-app.get('/', (req, res) => {
-    console.log("Nature World is Running")
-    res.send("Nature World Server is Running");
-})
+
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_USER_PASSWORD}@cluster0.vli9jdy.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
@@ -181,3 +178,7 @@ async function run() {
 }
 run().catch(console.dir)
 
+app.get('/', (req, res) => {
+    console.log("Nature World is Running")
+    res.send("Nature World Server is Running");
+})
